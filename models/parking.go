@@ -12,6 +12,11 @@ type Estacionamiento struct {
 	espace [20]bool
 }
 
+type VehicleA struct {
+	Contenedor *fyne.Container
+	Imagen     *canvas.Image
+}
+
 func NewEstacionamiento(espacios chan int, puertaMu *sync.Mutex) *Estacionamiento {
 	return &Estacionamiento{
 		espacios:      espacios,
@@ -20,11 +25,18 @@ func NewEstacionamiento(espacios chan int, puertaMu *sync.Mutex) *Estacionamient
 	}
 }
 
+
+func (cq *VehicleA) Salida() {
+	cq.Imagen.Move(fyne.NewPos(80, 280))
+	cq.Contenedor.Add(cq.Imagen)
+	cq.Contenedor.Refresh()
+}
+
 func (p *Estacionamiento) GetEspacios() chan int {
 	return p.espacios
 }
 
-func (p *Estacionamiento) GetPuertaMu() *sync.Mutex {
+func (p *Estacionamiento) GetDoor() *sync.Mutex {
 	return p.puerta
 }
 
@@ -34,15 +46,4 @@ func (p *Estacionamiento) GetEspace() [20]bool {
 
 func (p *Estacionamiento) Setespace(espace [20]bool) {
 	p.espace = espace
-}
-
-type CarQueue struct {
-	Contenedor *fyne.Container
-	Imagen     *canvas.Image
-}
-
-func (cq *CarQueue) ColaSalida() {
-	cq.Imagen.Move(fyne.NewPos(80, 280))
-	cq.Contenedor.Add(cq.Imagen)
-	cq.Contenedor.Refresh()
 }

@@ -51,14 +51,14 @@ func (s *MainScene) Run() {
             auto.Iniciar(p, contenedor, &wg)
         }(i)
 
-        var poisson = generarPoisson(float64(2))
+        var poisson = poisson(float64(2))
         time.Sleep(time.Second * time.Duration(poisson))
     }
 
     wg.Wait()
 }
 
-func generarPoisson(lambda float64) float64 {
+func poisson(lambda float64) float64 {
     poisson := distuv.Poisson{Lambda: lambda, Src: nil}
     return poisson.Rand()
 }
