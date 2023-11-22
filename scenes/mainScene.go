@@ -10,12 +10,10 @@ import (
     "time"
 )
 
-// Definición de la estructura MainScene
 type MainScene struct {
     window fyne.Window
 }
 
-// Función NewMainScene crea una nueva instancia de MainScene
 func NewMainScene(window fyne.Window) *MainScene {
     return &MainScene{
         window: window,
@@ -24,19 +22,16 @@ func NewMainScene(window fyne.Window) *MainScene {
 
 var contenedor = container.NewWithoutLayout()
 
-// Función Show muestra la escena principal
 func (s *MainScene) Show() {
-    // Reemplazar el rectángulo con una imagen
-    imagenContorno := canvas.NewImageFromFile("./assets/estacionamiento.jpg") // Asegúrate de cambiar la ruta al archivo de imagen correcto
-    imagenContorno.FillMode = canvas.ImageFillContain // Puede cambiar a ImageFillOriginal si es necesario
+    imagenContorno := canvas.NewImageFromFile("./assets/estacionamiento.jpg")
+    imagenContorno.FillMode = canvas.ImageFillContain
     imagenContorno.Resize(fyne.NewSize(1080, 720))
     imagenContorno.Move(fyne.NewPos(0, -80))
 
-    contenedor.Add(imagenContorno) // Agregar la imagen al contenedor
+    contenedor.Add(imagenContorno)
     s.window.SetContent(contenedor)
 }
 
-// Función Run inicia la simulación del estacionamiento
 func (s *MainScene) Run() {
     p := models.NewEstacionamiento(make(chan int, 20), &sync.Mutex{})
 
@@ -56,14 +51,13 @@ func (s *MainScene) Run() {
             auto.Iniciar(p, contenedor, &wg)
         }(i)
 
-        var poisson = generarPoisson(float64(2)) // Genera un valor Poisson con una tasa de llegada de 2
+        var poisson = generarPoisson(float64(2))
         time.Sleep(time.Second * time.Duration(poisson))
     }
 
     wg.Wait()
 }
 
-// Función generarPoisson genera una variable aleatoria Poisson con una tasa dada
 func generarPoisson(lambda float64) float64 {
     poisson := distuv.Poisson{Lambda: lambda, Src: nil}
     return poisson.Rand()

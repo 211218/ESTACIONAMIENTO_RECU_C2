@@ -7,22 +7,20 @@ import (
     "math/rand"
     "sync"
     "time"
+    "fmt"
 )
 
-// Definición de la estructura Vehicle
 type Vehicle struct {
     id              int
     tiempoLim       time.Duration
     espacioAsignado int
     imagenEntrada   *canvas.Image
-    imagenSalida    *canvas.Image // Usamos solo la imagen de salida
+    imagenSalida    *canvas.Image 
 }
 
-// Función NewVehicle crea una nueva instancia de Vehicle
 func NewVehicle(id int) *Vehicle {
-    // Carga imágenes desde archivos y establece campos iniciales
     imagenEntrada := canvas.NewImageFromURI(storage.NewFileURI("./assets/car.png"))
-    imagenSalida := canvas.NewImageFromURI(storage.NewFileURI("./assets/car_salida.png"))
+    imagenSalida := canvas.NewImageFromURI(storage.NewFileURI("./assets/carLeft.png"))
     return &Vehicle{
         id:              id,
         tiempoLim:       time.Duration(rand.Intn(20)+20) * time.Second,
@@ -32,17 +30,16 @@ func NewVehicle(id int) *Vehicle {
     }
 }
 
-// Función Entrar permite que el Vehiclemóvil entre al estacionamiento
 func (a *Vehicle) Entrar(p *Estacionamiento, contenedor *fyne.Container) {
     p.GetEspacios() <- a.GetId()
     p.GetPuertaMu().Lock()
 
-    espacios := p.GetEspaciosArray()
+    espacios := p.GetEspace()
     const (
-        columnasPorGrupo   = 10
-        espacioEntreFilas  = 10
-        espacioHorizontal  = 70
-        espacioVertical    = 100
+        columna   = 10
+        espaceFilas  = 10
+        espaceHorizontal  = 70
+        espaceVertical    = 100
     )
 
     time.Sleep(time.Millisecond * 1500)
@@ -51,29 +48,28 @@ func (a *Vehicle) Entrar(p *Estacionamiento, contenedor *fyne.Container) {
             espacios[i] = true
             a.espacioAsignado = i
 
-            fila := i / columnasPorGrupo
+            fila := i / columna
 
-            x := float32(320 + (i%columnasPorGrupo)*espacioHorizontal)
-            y := float32(180 + fila*espacioEntreFilas + (i/columnasPorGrupo)*espacioVertical)
+            x := float32(320 + (i%columna)*espaceHorizontal)
+            y := float32(180 + fila*espaceFilas + (i/columna)*espaceVertical)
 
             a.imagenEntrada.Move(fyne.NewPos(x, y))
             break
         }
     }
-
-    p.SetEspaciosArray(espacios)
+    fmt.Printf("Vehículo %d Entrando al estacionamiento\n", a.GetId())
+    p.Setespace(espacios)
     p.GetPuertaMu().Unlock()
     contenedor.Refresh()
 }
 
-// Función Salir permite que el Vehiclemóvil salga del estacionamiento
 func (a *Vehicle) Salir(p *Estacionamiento, contenedor *fyne.Container) {
     <-p.GetEspacios()
     p.GetPuertaMu().Lock()
 
-    spacesArray := p.GetEspaciosArray()
+    spacesArray := p.GetEspace()
     spacesArray[a.espacioAsignado] = false
-    p.SetEspaciosArray(spacesArray)
+    p.Setespace(spacesArray)
 
     p.GetPuertaMu().Unlock()
 
@@ -91,28 +87,24 @@ func (a *Vehicle) Salir(p *Estacionamiento, contenedor *fyne.Container) {
         a.imagenSalida.Move(fyne.NewPos(a.imagenSalida.Position().X, a.imagenSalida.Position().Y-30))
         time.Sleep(time.Millisecond * 200)
     }
-
+    fmt.Printf("Vehículo %d Saliendo del estacionamiento\n", a.GetId())
     contenedor.Remove(a.imagenSalida)
     contenedor.Refresh()
 }
 
 
-// Función Iniciar inicia el proceso del Vehiclemóvil en el estacionamiento
 func (a *Vehicle) Iniciar(p *Estacionamiento, contenedor *fyne.Container, wg *sync.WaitGroup) {
-    a.Avanzar(6) // Realiza una animación de avance
-
-    a.Entrar(p, contenedor) // El Vehiclemóvil entra en el estacionamiento
-
-    time.Sleep(a.tiempoLim) // Espera el tiempo límite
+    a.Avanzar(6) 
+    a.Entrar(p, contenedor)
+    time.Sleep(a.tiempoLim)
 
     contenedor.Remove(a.imagenEntrada)
 
-    a.Salir(p, contenedor) // El Vehiclemóvil sale del estacionamiento
+    a.Salir(p, contenedor)
 
-    wg.Done() // Indica que el Vehiclemóvil ha terminado su proceso
+    wg.Done()
 }
 
-// Función Avanzar realiza una animación de avance del Vehiclemóvil
 func (a *Vehicle) Avanzar(pasos int) {
     for i := 0; i < pasos; i++ {
         a.imagenEntrada.Move(fyne.NewPos(a.imagenEntrada.Position().X, a.imagenEntrada.Position().Y+20))
@@ -120,12 +112,11 @@ func (a *Vehicle) Avanzar(pasos int) {
     }
 }
 
-// Función GetId devuelve el identificador del Vehiclemóvil
+
 func (a *Vehicle) GetId() int {
     return a.id
 }
 
-// Función GetImagenEntrada devuelve la imagen de entrada del Vehiclemóvil
 func (a *Vehicle) GetImagenEntrada() *canvas.Image {
     return a.imagenEntrada
 }

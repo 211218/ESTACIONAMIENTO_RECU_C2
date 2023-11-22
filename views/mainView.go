@@ -6,25 +6,22 @@ import (
 	"fyne.io/fyne/v2/app"
 )
 
-// Definición de la estructura MainView
 type MainView struct{}
 
-// Función NewMainView crea una nueva instancia de MainView
 func NewMainView() *MainView {
 	return &MainView{}
 }
 
-// Función Run inicia la vista principal de la aplicación
 func (v *MainView) Run() {
-	myApp := app.New() // Crea una nueva instancia de la aplicación Fyne
-	window := myApp.NewWindow("Estacionamiento concurrente") // Crea una nueva ventana con un título
-	window.CenterOnScreen() // Centra la ventana en la pantalla
-	window.SetFixedSize(true) // Establece el tamaño de la ventana como fijo
-	window.Resize(fyne.NewSize(1080, 600)) // Establece el tamaño de la ventana
+	myApp := app.New() 
+	window := myApp.NewWindow("Estacionamiento") 
+	window.CenterOnScreen() 
+	window.SetFixedSize(true)
+	window.Resize(fyne.NewSize(1080, 600))
 
-	mainScene := scenes.NewMainScene(window) // Crea una instancia de la escena principal
-	mainScene.Show() // Muestra la escena en la ventana
-	go mainScene.Run() // Inicia la simulación en segundo plano
+	mainScene := scenes.NewMainScene(window)
+	mainScene.Show() 
+	go mainScene.Run() 
 
-	window.ShowAndRun() // Muestra la ventana y ejecuta la aplicación
+	window.ShowAndRun() 
 }
