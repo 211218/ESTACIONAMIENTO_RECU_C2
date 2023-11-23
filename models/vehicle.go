@@ -30,7 +30,7 @@ func NewVehicle(id int) *Vehicle {
     }
 }
 
-func (a *Vehicle) Entrar(p *Estacionamiento, contenedor *fyne.Container) {
+func (a *Vehicle) Entrar(p *Parking, contenedor *fyne.Container) {
     p.GetEspacios() <- a.GetId()
     p.GetDoor().Lock()
 
@@ -57,13 +57,13 @@ func (a *Vehicle) Entrar(p *Estacionamiento, contenedor *fyne.Container) {
             break
         }
     }
-    fmt.Printf("Vehículo %d Entrando al estacionamiento\n", a.GetId())
+    fmt.Printf("Vehículo %d Entrando al Parking\n", a.GetId())
     p.Setespace(espacios)
     p.GetDoor().Unlock()
     contenedor.Refresh()
 }
 
-func (a *Vehicle) Salir(p *Estacionamiento, contenedor *fyne.Container) {
+func (a *Vehicle) Salir(p *Parking, contenedor *fyne.Container) {
     <-p.GetEspacios()
     p.GetDoor().Lock()
 
@@ -87,13 +87,13 @@ func (a *Vehicle) Salir(p *Estacionamiento, contenedor *fyne.Container) {
         a.imagenSalida.Move(fyne.NewPos(a.imagenSalida.Position().X, a.imagenSalida.Position().Y-30))
         time.Sleep(time.Millisecond * 200)
     }
-    fmt.Printf("Vehículo %d Saliendo del estacionamiento\n", a.GetId())
+    fmt.Printf("Vehículo %d Saliendo del Parking\n", a.GetId())
     contenedor.Remove(a.imagenSalida)
     contenedor.Refresh()
 }
 
 
-func (a *Vehicle) Iniciar(p *Estacionamiento, contenedor *fyne.Container, wg *sync.WaitGroup) {
+func (a *Vehicle) Iniciar(p *Parking, contenedor *fyne.Container, wg *sync.WaitGroup) {
     a.Avanzar(6) 
     a.Entrar(p, contenedor)
     time.Sleep(a.tiempoLim)

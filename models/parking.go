@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type Estacionamiento struct {
+type Parking struct {
 	espacios      chan int
 	puerta        *sync.Mutex
 	espace [20]bool
@@ -17,8 +17,8 @@ type VehicleA struct {
 	Imagen     *canvas.Image
 }
 
-func NewEstacionamiento(espacios chan int, puertaMu *sync.Mutex) *Estacionamiento {
-	return &Estacionamiento{
+func NewParking(espacios chan int, puertaMu *sync.Mutex) *Parking {
+	return &Parking{
 		espacios:      espacios,
 		puerta:        puertaMu,
 		espace: [20]bool{},
@@ -32,18 +32,18 @@ func (cq *VehicleA) Salida() {
 	cq.Contenedor.Refresh()
 }
 
-func (p *Estacionamiento) GetEspacios() chan int {
+func (p *Parking) GetEspacios() chan int {
 	return p.espacios
 }
 
-func (p *Estacionamiento) GetDoor() *sync.Mutex {
+func (p *Parking) GetDoor() *sync.Mutex {
 	return p.puerta
 }
 
-func (p *Estacionamiento) GetEspace() [20]bool {
+func (p *Parking) GetEspace() [20]bool {
 	return p.espace
 }
 
-func (p *Estacionamiento) Setespace(espace [20]bool) {
+func (p *Parking) Setespace(espace [20]bool) {
 	p.espace = espace
 }
