@@ -25,13 +25,13 @@ func NewVehicle(id int) *Vehicle {
         id:              id,
         tiempoLim:       time.Duration(rand.Intn(20)+20) * time.Second,
         espacioAsignado: 0,
-        imagenEntrada:   imagenEntrada,
+        imagenEntrada:   imagenEntrada, 
         imagenSalida:    imagenSalida,
     }
 }
 
 func (a *Vehicle) Entrar(p *Parking, contenedor *fyne.Container) {
-    p.GetEspacios() <- a.GetId()
+    p.GetChannelSpace() <- a.GetId()
     p.GetDoor().Lock()
 
     espacios := p.GetEspace()
@@ -58,18 +58,18 @@ func (a *Vehicle) Entrar(p *Parking, contenedor *fyne.Container) {
         }
     }
     fmt.Printf("Vehículo %d Entrando al Parking\n", a.GetId())
-    p.Setespace(espacios)
+    p.SetEspace(espacios)
     p.GetDoor().Unlock()
     contenedor.Refresh()
 }
 
 func (a *Vehicle) Salir(p *Parking, contenedor *fyne.Container) {
-    <-p.GetEspacios()
+    <-p.GetChannelSpace()
     p.GetDoor().Lock()
 
     spacesArray := p.GetEspace()
     spacesArray[a.espacioAsignado] = false
-    p.Setespace(spacesArray)
+    p.SetEspace(spacesArray)
 
     p.GetDoor().Unlock()
 

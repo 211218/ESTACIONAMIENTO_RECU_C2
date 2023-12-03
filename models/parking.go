@@ -7,9 +7,9 @@ import (
 )
 
 type Parking struct {
-	espacios      chan int
-	puerta        *sync.Mutex
-	espace [20]bool
+	ChannelSpace chan int
+	puerta   *sync.Mutex
+	espace   [20]bool
 }
 
 type VehicleA struct {
@@ -17,23 +17,16 @@ type VehicleA struct {
 	Imagen     *canvas.Image
 }
 
-func NewParking(espacios chan int, puertaMu *sync.Mutex) *Parking {
+func NewParking(ChannelSpace chan int, puertaMu *sync.Mutex) *Parking {
 	return &Parking{
-		espacios:      espacios,
-		puerta:        puertaMu,
-		espace: [20]bool{},
+		ChannelSpace: ChannelSpace,
+		puerta:   puertaMu,
+		espace:   [20]bool{},
 	}
 }
 
-
-func (cq *VehicleA) Salida() {
-	cq.Imagen.Move(fyne.NewPos(80, 280))
-	cq.Contenedor.Add(cq.Imagen)
-	cq.Contenedor.Refresh()
-}
-
-func (p *Parking) GetEspacios() chan int {
-	return p.espacios
+func (p *Parking) GetChannelSpace() chan int {
+	return p.ChannelSpace
 }
 
 func (p *Parking) GetDoor() *sync.Mutex {
@@ -44,6 +37,6 @@ func (p *Parking) GetEspace() [20]bool {
 	return p.espace
 }
 
-func (p *Parking) Setespace(espace [20]bool) {
+func (p *Parking) SetEspace(espace [20]bool) {
 	p.espace = espace
 }
