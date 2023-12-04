@@ -112,7 +112,6 @@ func (a *Vehicle) Avanzar(pasos int) {
     }
 }
 
-
 func (a *Vehicle) GetId() int {
     return a.id
 }
